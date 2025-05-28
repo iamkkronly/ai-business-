@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BizAI Pro</title>
+<style>
+:root{--g:#4f46e5;--bg:#f8fafc;--t:#1e293b}
+body{font-family:system-ui;margin:0;height:100vh;display:flex;flex-direction:column;background:var(--bg);color:var(--t)}
+.h{background:linear-gradient(135deg,#4f46e5,#6366f1);color:#fff;padding:1em;text-align:center;box-shadow:0 4px 6px -1px rgba(0,0,0,.1)}
+#c{flex:1;padding:1em;overflow-y:auto;max-width:600px;margin:0 auto;width:100%}
+.m{max-width:90%;padding:.8em 1.2em;margin:.6em 0;border-radius:1.2em;font-size:.9em;line-height:1.4;opacity:0;animation:f .3s ease forwards}
+.u{background:var(--g);color:#fff;margin-left:auto;box-shadow:0 2px 4px rgba(79,70,229,.2)}
+.b{background:#fff;margin-right:auto;border:1px solid #e2e8f0;box-shadow:0 2px 4px rgba(0,0,0,.05)}
+.i{display:flex;gap:.6em;padding:1em;background:#fff;border-top:1px solid #f1f5f9}
+input{flex:1;padding:.8em 1em;border:1px solid #e2e8f0;border-radius:2em;font-size:.9em}
+input:focus{outline:0;border-color:var(--g)}
+button{padding:.8em 1.4em;background:var(--g);color:#fff;border:0;border-radius:2em;cursor:pointer}
+@keyframes f{to{opacity:1}}
+</style>
+</head>
+<body>
+<div class="h">✨ BizWriter Pro</div>
+<div id="c"><div class="m b">🚀 Let's create:<br>• Ads • Social Posts • Product Copy<br>💡 Include key details!</div></div>
+<div class="i">
+<input type="text" id="x" placeholder="Content request...">
+<button id="y">→</button>
+</div>
+
+<script>
+const API_KEY = 'AIzaSyD3fNCe8FZghIk4Xh6BAs6A3ds1_7jxY1w';
+let c=document.getElementById('c'),x=document.getElementById('x'),y=document.getElementById('y'),h=[];
+
+async function g(p){
+    try {
+        h.push({role:'user',parts:[{text:p}]});
+        h = h.slice(-5);
+        
+        const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+                contents:h,
+                systemInstruction:{parts:[{text:"Professional business writer. Maintain context from previous messages. Be concise."}]},
+                generationConfig:{temperature:0.7,maxOutputTokens:800}
+            })
+        });
+        
+        const d=await r.json(),t=d.candidates[0].content.parts[0].text;
+        h.push({role:'model',parts:[{text:t}]});
+        return t;
+    } catch { return '⚠️ Error - Try again' }
+}
+
+function m(t,u){let d=document.createElement('div');d.className=`m ${u?'u':'b'}`;d.textContent=t;c.appendChild(d);c.scrollTop=c.scrollHeight}
+
+y.onclick=async()=>{
+    let t=x.value.trim();
+    if(!t) return;
+    m(t,1);
+    x.value='';
+    y.disabled=1;
+    m(await g(t));
+    y.disabled=0;
+}
+x.onkeypress=e=>e.key==='Enter'&&y.click()
+</script>
+</body>
+</html>
